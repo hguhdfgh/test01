@@ -7,7 +7,7 @@ root = pathlib.Path(__file__).parent / 'public'
 end = sys.argv[1] if len(sys.argv) > 1 else '10.2'
 tmp = pathlib.Path(tempfile.mkdtemp())
 subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', root / 'raw.mp4', '-t', end, '-vf',
-                'fps=30,scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920', tmp / 'f%04d.png'], check=True)
+                'fps=30,scale=1080:-2', tmp / 'f%04d.png'], check=True)
 sess = new_session('u2net_human_seg')
 frames = sorted(tmp.glob('f*.png'))
 for i, f in enumerate(frames):

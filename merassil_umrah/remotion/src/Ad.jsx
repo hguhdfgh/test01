@@ -5,7 +5,7 @@ import {
 } from 'remotion';
 
 export const FPS = 30;
-export const DURATION = 44.4; // 42.45s voice + CTA hold
+export const DURATION = 44.4; // 42.42s raw + CTA hold
 
 const GOLD = '#E8A93A';
 const GOLD_D = '#C98A1E';
@@ -14,32 +14,19 @@ const a = (n) => staticFile(`a/${n}.jpg`);
 const clamp = { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' };
 const ease = Easing.bezier(0.22, 1, 0.36, 1);
 
-// ---------------- timeline (seconds, aligned to the voice track) ----------------
-// kind: speaker | intro | card | video | cta
-const SEGMENTS = [
-  { from: 0, to: 10.0, kind: 'intro' },
-  { from: 10.0, to: 14.35, kind: 'speaker', punch: [[13.18, 1.08]] },
-  { from: 14.35, to: 16.7, kind: 'card', src: 'gold_airliner_banking_upward', drift: [1.0, 1.14], pan: [-40, 40] },
-  { from: 16.7, to: 19.15, kind: 'card', src: 'gold_globe_showing_flight_arc', drift: [1.12, 1.0], pan: [0, 0] },
-  { from: 19.15, to: 20.9, kind: 'card', src: 'gold_crown_with_royal-blue_gems', drift: [1.0, 1.15] },
-  { from: 20.9, to: 22.35, kind: 'card', src: 'gold_coins_with_checkmark', drift: [1.15, 1.02] },
-  { from: 22.35, to: 23.85, kind: 'speaker', punch: [[22.76, 1.1]] },
-  { from: 23.85, to: 25.85, kind: 'card', src: 'gift_box_opening', drift: [1.0, 1.16] },
-  { from: 25.85, to: 26.65, kind: 'card', src: 'golden_suitcase_on_black_background', drift: [1.18, 1.05] },
-  { from: 26.65, to: 27.55, kind: 'card', src: 'folded_white_cloth_with_ribbon', drift: [1.05, 1.18] },
-  { from: 27.55, to: 28.45, kind: 'card', src: 'folded_khimar_on_gold_tray', drift: [1.18, 1.05] },
-  { from: 28.45, to: 29.2, kind: 'card', src: 'glass_bottle_of_water', drift: [1.05, 1.16] },
-  { from: 29.2, to: 31.7, kind: 'video', src: 'makkah' },
-  { from: 31.7, to: 33.5, kind: 'card', src: 'golden_person_silhouette_holding', drift: [1.0, 1.12] },
-  { from: 33.5, to: 35.25, kind: 'card', src: 'gold_kaaba_on_pedestal', drift: [1.14, 1.0] },
-  { from: 35.25, to: 39.55, kind: 'speaker', punch: [[36.74, 1.1], [38.66, 1.14]] },
-  { from: 39.55, to: DURATION, kind: 'cta' },
-];
-// full logo transitions (0.5s) vs quick flash cuts (0.25s) inside the gifts list
-const TRANSITIONS = SEGMENTS.slice(1).map((s) => ({
-  t: s.from,
-  fast: [26.65, 27.55, 28.45, 25.85].includes(s.from),
-}));
+// The raw is square (1076x1080). After the intro it sits in a framed "card" in the middle of the 9:16 canvas:
+// top band = logo + motion icons, bottom band = captions.
+const FRAME = { top: 400, size: 1080 };
+const CAPTION_TOP = 1500;
+
+// ---------------- timeline: scene cuts detected in the raw ----------------
+const CTA_AT = 39.55;
+const CUTS = [9.93, 14.4, 15.0, 18.17, 20.57, 24.73, 26.0, 29.7, 31.7, 33.57, 35.27, CTA_AT];
+const FAST = [15.0]; // plane exterior -> window is only 0.6s long, use a quick flash
+const TRANSITIONS = CUTS.map((t) => ({ t, fast: FAST.includes(t) }));
+
+// punch-in zooms on the framed footage (time, amount)
+const PUNCH = [[13.18, 1.08], [19.22, 1.08], [22.76, 1.06], [28.5, 1.08], [36.74, 1.1], [38.66, 1.14]];
 
 // captions: s = small top, b = big gold keyword, u = small under
 const CAPS = [
@@ -48,7 +35,7 @@ const CAPS = [
   { t: [2.18, 5.06], s: 'ببرنامج', b: 'عمرة', u: 'لموسم 2026/2027' },
   { t: [5.14, 6.7], s: 'ولخدمة أفضل', b: 'ضيوف الرحمن' },
   { t: [6.74, 8.05], s: 'جبنا لكم', b: 'عرضين', u: 'للعمرة' },
-  { t: [8.12, 9.98], s: 'عمرة', b: 'VIP', u: 'وعمرة اقتصادي' },
+  { t: [8.12, 9.92], s: 'عمرة', b: 'VIP', u: 'وعمرة اقتصادي' },
   { t: [10.0, 12.22], s: 'كان اللي عاش عمره كامل', b: 'يستنى', u: 'هاد النهار' },
   { t: [12.28, 14.34], s: 'واليوم إن شاء الله', b: 'الحلم', u: 'يولي حقيقة' },
   { t: [14.42, 16.68], s: 'طيران', b: 'مباشر', u: 'من الجزائر لأرض الحرمين' },
@@ -69,29 +56,48 @@ const CAPS = [
   { t: [38.58, 39.52], s: 'ما تخليهاش', b: 'العام الجاي' },
 ];
 
-// icons popping next to the speaker (screen-blended 3D gold renders)
+// gold 3D icons popping in (motion graphics). Intro: around the cut-out speaker. After: in the top band / frame corner.
+const BAND_Y = 205; // center of the top band
 const POPS = [
-  { t: [2.7, 5.05], src: 'gold_calendar_icon_on_black', x: 790, y: 560, size: 420, label: '2026/2027' },
-  { t: [7.2, 9.98], src: 'gold_crown_with_royal-blue_gems', x: 300, y: 560, size: 420, enter: 8.4 },
-  { t: [7.2, 9.98], src: 'gold_coins_with_checkmark', x: 790, y: 560, size: 420, enter: 9.02 },
-  { t: [12.28, 14.3], src: 'gold_kaaba_on_pedestal', x: 790, y: 520, size: 420, enter: 13.18 },
-  { t: [22.4, 23.82], src: 'gold_heart_with_inner_glow', x: 800, y: 520, size: 340, enter: 22.76 },
-  { t: [36.52, 38.55], src: 'gold_heart_with_inner_glow', x: 790, y: 520, size: 440, enter: 36.74 },
-  { t: [38.58, 39.52], src: 'gold_calendar_icon_on_black', x: 790, y: 520, size: 400, enter: 39.04 },
+  // intro
+  { t: [2.7, 5.05], src: 'gold_calendar_icon_on_black', x: 830, y: 760, size: 400, label: '2026/2027' },
+  { t: [5.14, 6.7], src: 'gold_kaaba_on_pedestal', x: 830, y: 760, size: 400 },
+  { t: [7.2, 9.9], src: 'gold_crown_with_royal-blue_gems', x: 250, y: 760, size: 400, enter: 8.4, label: 'VIP' },
+  { t: [7.2, 9.9], src: 'gold_coins_with_checkmark', x: 830, y: 760, size: 400, enter: 9.02, label: 'اقتصادي' },
+  // framed part (top band, right side so the logo keeps the left)
+  { t: [12.28, 14.34], src: 'gold_heart_with_inner_glow', x: 900, y: BAND_Y, size: 330, enter: 13.18 },
+  { t: [14.42, 16.1], src: 'gold_airliner_banking_upward', x: 870, y: BAND_Y, size: 380 },
+  { t: [16.1, 18.1], src: 'gold_globe_showing_flight_arc', x: 900, y: BAND_Y, size: 340 },
+  { t: [18.2, 19.15], src: 'gold_crescent_and_dome_icon', x: 900, y: BAND_Y, size: 330, enter: 18.2 },
+  { t: [19.22, 20.9], src: 'gold_crown_with_royal-blue_gems', x: 900, y: BAND_Y, size: 340 },
+  { t: [20.94, 22.35], src: 'gold_coins_with_checkmark', x: 900, y: BAND_Y, size: 340 },
+  { t: [23.88, 25.85], src: 'gift_box_opening', x: 900, y: BAND_Y, size: 340, enter: 25.54 },
+  { t: [29.26, 31.68], src: 'gold_kaaba_on_pedestal', x: 900, y: BAND_Y, size: 340, enter: 30.84 },
+  { t: [31.76, 35.24], src: 'golden_person_silhouette_holding', x: 900, y: BAND_Y, size: 340, enter: 32.64 },
+  { t: [36.52, 38.55], src: 'gold_heart_with_inner_glow', x: 900, y: BAND_Y, size: 340, enter: 36.74 },
+  { t: [38.58, 39.52], src: 'gold_calendar_icon_on_black', x: 900, y: BAND_Y, size: 330, enter: 39.04 },
 ];
+// gift checklist: 4 icons fill a row one by one under the logo band
+const GIFTS = [
+  { at: 25.9, src: 'golden_suitcase_on_black_background' },
+  { at: 26.7, src: 'folded_white_cloth_with_ribbon' },
+  { at: 27.6, src: 'folded_khimar_on_gold_tray' },
+  { at: 28.5, src: 'glass_bottle_of_water' },
+];
+const GIFTS_END = 29.65;
 
 const SFX = [
   ...TRANSITIONS.map((x) => ({ t: x.t - (x.fast ? 0.12 : 0.25), f: x.fast ? 'swish' : 'whoosh', v: x.fast ? 0.35 : 0.45 })),
-  ...POPS.map((p) => ({ t: p.enter ?? p.t[0], f: 'pop', v: 0.55 })),
+  ...POPS.map((p) => ({ t: p.enter ?? p.t[0], f: 'pop', v: 0.5 })),
+  ...GIFTS.map((g) => ({ t: g.at, f: 'tick', v: 0.6 })),
   { t: 0.05, f: 'shimmer', v: 0.35 },
-  { t: 2.72, f: 'shimmer', v: 0.3 },
+  { t: 0.9, f: 'shimmer', v: 0.25 },
   { t: 8.4, f: 'shimmer', v: 0.3 },
   { t: 19.22, f: 'shimmer', v: 0.35 },
-  { t: 25.9, f: 'tick', v: 0.6 }, { t: 26.7, f: 'tick', v: 0.6 }, { t: 27.6, f: 'tick', v: 0.6 }, { t: 28.5, f: 'tick', v: 0.6 },
-  { t: 29.2, f: 'impact', v: 0.5 },
+  { t: 29.7, f: 'impact', v: 0.45 },
   { t: 38.35, f: 'riser', v: 0.35 },
-  { t: 39.55, f: 'impact', v: 0.55 },
-  { t: 40.6, f: 'pop', v: 0.5 }, { t: 41.2, f: 'pop', v: 0.5 }, { t: 41.8, f: 'shimmer', v: 0.35 },
+  { t: CTA_AT, f: 'impact', v: 0.55 },
+  { t: CTA_AT + 1.05, f: 'pop', v: 0.5 }, { t: CTA_AT + 1.65, f: 'pop', v: 0.5 }, { t: CTA_AT + 2.25, f: 'shimmer', v: 0.35 },
 ];
 
 // ---------------- helpers ----------------
@@ -102,7 +108,10 @@ const goldText = {
 };
 const deepGlow = (k = 1) =>
   `drop-shadow(0 0 ${6 * k}px rgba(255,200,90,.55)) drop-shadow(0 0 ${22 * k}px rgba(232,169,58,.45)) drop-shadow(0 0 ${60 * k}px rgba(201,138,30,.35))`;
-
+const iconMask = (inner = 42, outer = 68) => ({
+  mixBlendMode: 'screen', objectFit: 'cover',
+  WebkitMaskImage: `radial-gradient(circle, #000 ${inner}%, transparent ${outer}%)`, maskImage: `radial-gradient(circle, #000 ${inner}%, transparent ${outer}%)`,
+});
 const transitionAmount = (t) => {
   let best = 0;
   for (const tr of TRANSITIONS) {
@@ -112,78 +121,59 @@ const transitionAmount = (t) => {
   }
   return best;
 };
+const full = { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' };
 
 // ---------------- background (reference style: black texture + gold dashed curves) ----------------
 const GoldLinesBg = () => {
-  const t = useT();  // relative is fine for ambient motion
+  const t = useT();
   return (
     <AbsoluteFill style={{ background: '#050505' }}>
-      <Img src={a('golden_lines_on_dark_background')} style={{ width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${1.08 + 0.04 * Math.sin(t * 0.3)}) rotate(${t * 0.15}deg)` }} />
-      <Img src={a('gold_dust_floating_in_void')} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', mixBlendMode: 'screen', opacity: 0.35, transform: `translateY(${-t * 12}px) scale(1.2)` }} />
+      <Img src={a('golden_lines_on_dark_background')} style={{ ...full, transform: `scale(${1.08 + 0.04 * Math.sin(t * 0.3)}) rotate(${t * 0.15}deg)` }} />
+      <Img src={a('gold_dust_floating_in_void')} style={{ ...full, mixBlendMode: 'screen', opacity: 0.3, transform: `translateY(${-(t * 12) % 300}px) scale(1.3)` }} />
       <AbsoluteFill style={{ background: 'radial-gradient(ellipse at 50% 45%, transparent 35%, rgba(0,0,0,.75) 100%)' }} />
     </AbsoluteFill>
   );
 };
 
-// ---------------- speaker ----------------
-const Speaker = ({ seg, cutout }) => {
-  const t = useT(seg.from);
-  let z = 1.04;
-  for (const [pt, amt] of seg.punch ?? []) {
-    z *= interpolate(t, [pt - 0.12, pt + 0.18, pt + 1.6], [1, amt, amt * 0.985], clamp);
-  }
-  const video = (
-    <OffthreadVideo
-      src={staticFile(cutout ? 'intro_cut.webm' : 'raw.mp4')}
-      muted transparent={cutout}
-      startFrom={Math.round(seg.from * FPS)}
-      style={{ width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${z})`, filter: 'contrast(1.06) saturate(1.05) sepia(.08)' }}
-    />
-  );
+// ---------------- intro: speaker cut out of his office, on the black/gold set ----------------
+const Intro = () => {
+  const t = useT();
+  const z = interpolate(t, [0, 9.93], [1.0, 1.08]) * interpolate(t, [2.72, 2.95], [1, 1.04], clamp) * interpolate(t, [8.4, 8.6], [1, 1.04], clamp);
   return (
     <AbsoluteFill>
-      {cutout && <GoldLinesBg />}
-      {cutout ? (
-        <AbsoluteFill style={{ filter: 'drop-shadow(0 0 40px rgba(232,169,58,.35))' }}>{video}</AbsoluteFill>
-      ) : video}
-      {!cutout && (
-        <>
-          <Img src={a('golden_lines_on_dark_background')} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', mixBlendMode: 'screen', opacity: 0.35 }} />
-          <AbsoluteFill style={{ background: 'radial-gradient(ellipse at 50% 40%, transparent 45%, rgba(0,0,0,.6) 100%)' }} />
-        </>
-      )}
+      <GoldLinesBg />
+      {/* gold halo behind the head */}
+      <div style={{ position: 'absolute', left: 140, top: 520, width: 800, height: 800, borderRadius: '50%', background: 'radial-gradient(circle, rgba(232,169,58,.28), transparent 65%)', filter: 'blur(20px)' }} />
+      <AbsoluteFill style={{ filter: 'drop-shadow(0 0 30px rgba(232,169,58,.35))' }}>
+        <OffthreadVideo src={staticFile('intro_cut.webm')} transparent muted
+          style={{ position: 'absolute', left: -170, top: 560, width: 1420, height: 1420 * (1080 / 1076), transform: `scale(${z})`, transformOrigin: '50% 30%', filter: 'contrast(1.05) saturate(1.05)' }} />
+      </AbsoluteFill>
+      {/* fade body into the black at the bottom so captions sit cleanly */}
+      <AbsoluteFill style={{ background: 'linear-gradient(180deg, transparent 62%, rgba(0,0,0,.85) 80%, #000 95%)' }} />
     </AbsoluteFill>
   );
 };
 
-// ---------------- full-screen gold 3D scene ----------------
-const Card = ({ seg }) => {
-  const t = useT(seg.from);
-  const p = (t - seg.from) / (seg.to - seg.from);
-  const [z0, z1] = seg.drift ?? [1, 1.1];
-  const [x0, x1] = seg.pan ?? [0, 0];
-  const z = interpolate(p, [0, 1], [z0, z1], { ...clamp, easing: Easing.inOut(Easing.sin) });
-  const x = interpolate(p, [0, 1], [x0, x1], clamp);
-  const style = { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transform: `translateX(${x}px) scale(${z})` };
+// ---------------- framed raw footage (all scenes after the intro) ----------------
+const Framed = () => {
+  const t = useT(9.93);
+  let z = 1.02;
+  for (const [pt, amt] of PUNCH) z *= interpolate(t, [pt - 0.12, pt + 0.18, pt + 1.6], [1, amt, amt * 0.985], clamp);
+  const enter = spring({ frame: (t - 9.93) * FPS, fps: FPS, config: { damping: 16 } });
   return (
-    <AbsoluteFill style={{ background: '#050505' }}>
-      <Img src={a(seg.src)} style={style} />
-      {/* bloom = deep glow on the hero object */}
-      <Img src={a(seg.src)} style={{ ...style, mixBlendMode: 'screen', opacity: 0.45, filter: 'blur(28px) brightness(1.3)' }} />
-      <Img src={a('gold_dust_floating_in_void')} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', mixBlendMode: 'screen', opacity: 0.4, transform: `translateY(${-p * 80}px) scale(1.25)` }} />
-      <AbsoluteFill style={{ background: 'radial-gradient(ellipse at 50% 42%, transparent 40%, rgba(0,0,0,.7) 100%)' }} />
-    </AbsoluteFill>
-  );
-};
-
-const VideoScene = ({ seg }) => {
-  const t = useT(seg.from);
-  const p = (t - seg.from) / (seg.to - seg.from);
-  return (
-    <AbsoluteFill style={{ background: '#000' }}>
-      <OffthreadVideo src={staticFile(`a/${seg.src}.mp4`)} muted style={{ width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${1.05 + p * 0.08})`, filter: 'contrast(1.08) saturate(1.1)' }} />
-      <Img src={a('golden_light_leak_on_black')} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', mixBlendMode: 'screen', opacity: 0.25 }} />
-      <AbsoluteFill style={{ background: 'radial-gradient(ellipse at 50% 42%, transparent 45%, rgba(0,0,0,.65) 100%)' }} />
+    <AbsoluteFill>
+      <GoldLinesBg />
+      <div style={{
+        position: 'absolute', left: 0, top: FRAME.top, width: FRAME.size, height: FRAME.size, overflow: 'hidden',
+        borderTop: `3px solid ${GOLD}`, borderBottom: `3px solid ${GOLD}`,
+        boxShadow: `0 0 50px rgba(232,169,58,.45), 0 0 120px rgba(201,138,30,.25)`,
+        transform: `scale(${0.92 + 0.08 * enter})`,
+      }}>
+        <OffthreadVideo src={staticFile('raw.mp4')} muted startFrom={Math.round(9.93 * FPS)}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${z})`, filter: 'contrast(1.06) saturate(1.06) sepia(.06)' }} />
+        <Img src={a('golden_lines_on_dark_background')} style={{ ...full, mixBlendMode: 'screen', opacity: 0.22 }} />
+        <AbsoluteFill style={{ background: 'radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,.45) 100%)' }} />
+      </div>
     </AbsoluteFill>
   );
 };
@@ -193,24 +183,44 @@ const Pop = ({ p }) => {
   const frame = useCurrentFrame();
   const t = frame / FPS;
   const enter = p.enter ?? p.t[0];
+  if (t < enter - 0.05 || t > p.t[1]) return null;
   const s = spring({ frame: frame - enter * FPS, fps: FPS, config: { damping: 13, stiffness: 140 } });
   const out = interpolate(t, [p.t[1] - 0.2, p.t[1]], [1, 0], clamp);
-  if (t < enter - 0.05) return null;
-  const vel = Math.max(0, 1 - s) ; // motion blur while flying in
   const float = Math.sin((t - enter) * 2.2) * 10;
   return (
     <div style={{
       position: 'absolute', left: p.x - p.size / 2, top: p.y - p.size / 2 + float, width: p.size, height: p.size,
-      transform: `scale(${0.4 + 0.6 * s}) rotate(${(1 - s) * -25}deg) translateY(${(1 - s) * 120}px)`,
-      opacity: Math.min(1, s * 1.6) * out, filter: `blur(${vel * 16 + (1 - out) * 10}px) ${deepGlow(0.8)}`,
+      transform: `scale(${(0.4 + 0.6 * s) * (0.9 + 0.1 * out)}) rotate(${(1 - s) * -25}deg) translateY(${(1 - s) * 120}px)`,
+      opacity: Math.min(1, s * 1.6) * out, filter: `blur(${(1 - s) * 16 + (1 - out) * 10}px) ${deepGlow(0.8)}`, // blur while moving = motion blur
     }}>
-      <Img src={a(p.src)} style={{
-        width: '100%', height: '100%', objectFit: 'cover', mixBlendMode: 'screen', borderRadius: '50%',
-        WebkitMaskImage: 'radial-gradient(circle, #000 42%, transparent 68%)', maskImage: 'radial-gradient(circle, #000 42%, transparent 68%)',
-      }} />
+      <Img src={a(p.src)} style={{ width: '100%', height: '100%', ...iconMask() }} />
       {p.label && (
-        <div style={{ position: 'absolute', bottom: 40, width: '100%', textAlign: 'center', fontFamily: 'Montserrat', fontWeight: 500, fontSize: 40, letterSpacing: 2, ...goldText }}>{p.label}</div>
+        <div style={{ position: 'absolute', bottom: 30, width: '100%', textAlign: 'center', fontFamily: /^[0-9A-Z]/.test(p.label) ? 'Montserrat' : 'Amiri', fontWeight: 700, fontSize: 46, letterSpacing: 2, ...goldText }}>{p.label}</div>
       )}
+    </div>
+  );
+};
+
+const GiftRow = () => {
+  const frame = useCurrentFrame();
+  const t = frame / FPS;
+  if (t < GIFTS[0].at - 0.05 || t > GIFTS_END) return null;
+  const out = interpolate(t, [GIFTS_END - 0.25, GIFTS_END], [1, 0], clamp);
+  const W = 190;
+  return (
+    <div style={{ position: 'absolute', right: 30, top: BAND_Y - W / 2 + 10, display: 'flex', gap: 6, opacity: out, filter: `blur(${(1 - out) * 8}px)` }}>
+      {GIFTS.map((g, i) => {
+        const s = spring({ frame: frame - g.at * FPS, fps: FPS, config: { damping: 12, stiffness: 170 } });
+        const on = t >= g.at;
+        return (
+          <div key={i} style={{ position: 'relative', width: W, height: W, opacity: on ? Math.min(1, s * 1.5) : 0.18, transform: `scale(${on ? 0.5 + 0.5 * s : 0.8}) translateY(${on ? (1 - s) * 60 : 0}px)`, filter: on ? `blur(${(1 - s) * 10}px) ${deepGlow(0.6)}` : 'grayscale(1)' }}>
+            <Img src={a(g.src)} style={{ width: '100%', height: '100%', ...iconMask(40, 66) }} />
+            {on && (
+              <div style={{ position: 'absolute', right: 18, bottom: 18, width: 46, height: 46, borderRadius: '50%', background: `linear-gradient(180deg, ${GOLD}, ${GOLD_D})`, color: '#111', fontSize: 34, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', transform: `scale(${s})`, boxShadow: '0 0 14px rgba(232,169,58,.8)' }}>✓</div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -232,28 +242,28 @@ const Caption = ({ c }) => {
       }}>{txt}</div>
     );
   };
-  const small = { fontFamily: 'Cairo', fontWeight: 600, fontSize: 44, color: '#F4EEE2', textShadow: '0 2px 12px rgba(0,0,0,.8)' };
+  const small = { fontFamily: 'Cairo', fontWeight: 600, fontSize: 46, color: '#F4EEE2', textShadow: '0 2px 12px rgba(0,0,0,.8)' };
   const isLatin = /^[A-Za-z]/.test(c.b ?? '');
   const big = {
     fontFamily: isLatin ? 'Playfair Display' : 'Amiri', fontStyle: isLatin ? 'italic' : 'normal', fontWeight: 700,
-    fontSize: (c.b ?? '').length > 8 ? 104 : 128, lineHeight: 1.15, ...goldText, filter: deepGlow(1), padding: '0 20px',
+    fontSize: (c.b ?? '').length > 8 ? 108 : 132, lineHeight: 1.15, ...goldText, padding: '0 20px',
   };
   return (
-    <div dir="rtl" style={{ position: 'absolute', left: 60, right: 60, top: 1240, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, textAlign: 'center' }}>
+    <div dir="rtl" style={{ position: 'absolute', left: 60, right: 60, top: CAPTION_TOP, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, textAlign: 'center' }}>
       {c.s && line(c.s, 0, small)}
       {c.b && <div style={{ filter: deepGlow(1) }}>{line(c.b, c.s ? 0.12 : 0, big)}</div>}
-      {c.u && line(c.u, 0.24, { ...small, fontWeight: 400, fontSize: 40 })}
+      {c.u && line(c.u, 0.24, { ...small, fontWeight: 400, fontSize: 42 })}
     </div>
   );
 };
 
-// ---------------- transition: gold/blue ribbon sweep from the logo + flash ----------------
+// ---------------- transition: gold/blue ribbon sweep from the logo + flash (0.5s) ----------------
 const LogoTransition = () => {
   const t = useT();
   const tr = TRANSITIONS.find((x) => Math.abs(t - x.t) < (x.fast ? 0.125 : 0.25));
   if (!tr) return null;
   const half = tr.fast ? 0.125 : 0.25;
-  const p = (t - (tr.t - half)) / (2 * half); // 0..1
+  const p = (t - (tr.t - half)) / (2 * half);
   const flash = 1 - Math.abs(p - 0.5) * 2;
   return (
     <AbsoluteFill style={{ pointerEvents: 'none' }}>
@@ -263,7 +273,7 @@ const LogoTransition = () => {
           <div style={{ position: 'absolute', left: -800, top: -400, width: 300, height: 3200, background: `linear-gradient(90deg, transparent, ${BLUE}, #3D66C9, transparent)`, transform: `translateX(${interpolate(p, [0, 1], [-650, 2300])}px) rotate(28deg)`, filter: 'blur(4px)', opacity: 0.9 }} />
         </>
       )}
-      <Img src={a('golden_light_leak_on_black')} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', mixBlendMode: 'screen', opacity: flash * 0.9, transform: `scale(${1.2 + p * 0.4}) translateX(${(p - 0.5) * 300}px)` }} />
+      <Img src={a('golden_light_leak_on_black')} style={{ ...full, mixBlendMode: 'screen', opacity: flash * 0.9, transform: `scale(${1.2 + p * 0.4}) translateX(${(p - 0.5) * 300}px)` }} />
       <AbsoluteFill style={{ background: `radial-gradient(circle at 50% 50%, rgba(255,226,160,${flash * 0.55}), transparent 60%)`, mixBlendMode: 'screen' }} />
     </AbsoluteFill>
   );
@@ -273,39 +283,37 @@ const LogoTransition = () => {
 const Logo = () => {
   const frame = useCurrentFrame();
   const s = spring({ frame: frame - 6, fps: FPS, config: { damping: 18 } });
-  const t = frame / FPS;
-  if (t > 39.55) return null; // CTA shows the big logo
-  return <Img src={staticFile('logo.png')} style={{ position: 'absolute', left: 44, top: 64, width: 250, opacity: s * 0.95, transform: `translateX(${(1 - s) * -40}px)`, filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.7)) drop-shadow(0 0 14px rgba(232,169,58,.35))' }} />;
+  if (frame / FPS > CTA_AT) return null; // CTA shows the big logo
+  return <Img src={staticFile('logo.png')} style={{ position: 'absolute', left: 44, top: 70, width: 270, opacity: s * 0.97, transform: `translateX(${(1 - s) * -40}px)`, filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.7)) drop-shadow(0 0 14px rgba(232,169,58,.35))' }} />;
 };
 
 // ---------------- CTA ----------------
-const CTA = ({ seg }) => {
-  const frame = useCurrentFrame() + Math.round(seg.from * FPS);
+const CTA = () => {
+  const frame = useCurrentFrame() + Math.round(CTA_AT * FPS);
   const t = frame / FPS;
-  const at = (d) => spring({ frame: frame - (seg.from + d) * FPS, fps: FPS, config: { damping: 14, stiffness: 120 } });
-  const item = (d, children, extra = {}) => {
+  const at = (d) => spring({ frame: frame - (CTA_AT + d) * FPS, fps: FPS, config: { damping: 14, stiffness: 120 } });
+  const item = (d, children) => {
     const s = at(d);
-    return <div style={{ opacity: Math.min(1, s * 1.5), transform: `translateY(${(1 - s) * 60}px) scale(${0.85 + 0.15 * s})`, filter: `blur(${(1 - s) * 10}px)`, ...extra }}>{children}</div>;
+    return <div style={{ opacity: Math.min(1, s * 1.5), transform: `translateY(${(1 - s) * 60}px) scale(${0.85 + 0.15 * s})`, filter: `blur(${(1 - s) * 10}px)` }}>{children}</div>;
   };
   const pulse = 1 + 0.03 * Math.sin(t * 6);
-  const iconMask = { mixBlendMode: 'screen', objectFit: 'cover', WebkitMaskImage: 'radial-gradient(circle, #000 40%, transparent 66%)', maskImage: 'radial-gradient(circle, #000 40%, transparent 66%)' };
   return (
     <AbsoluteFill>
-      <Img src={a('dark_background_with_golden_bokeh')} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${1.1 + (t - seg.from) * 0.01})` }} />
-      <GoldLinesOverlay />
+      <Img src={a('dark_background_with_golden_bokeh')} style={{ ...full, transform: `scale(${1.1 + (t - CTA_AT) * 0.01})` }} />
+      <Img src={a('golden_lines_on_dark_background')} style={{ ...full, mixBlendMode: 'screen', opacity: 0.6 }} />
       <AbsoluteFill dir="rtl" style={{ alignItems: 'center', paddingTop: 230, gap: 26, fontFamily: 'Cairo' }}>
         {item(0, <Img src={staticFile('logo.png')} style={{ width: 640, filter: deepGlow(0.7) }} />)}
         {item(0.25, <div style={{ fontSize: 50, color: '#F4EEE2', fontWeight: 600 }}>اتصل بنا</div>)}
         {item(0.4, <div style={{ fontFamily: 'Amiri', fontWeight: 700, fontSize: 150, lineHeight: 1, ...goldText, filter: deepGlow(1.1) }}>الآن</div>)}
         {item(1.05, (
           <div style={{ display: 'flex', alignItems: 'center', gap: 18, padding: '18px 42px 18px 30px', borderRadius: 999, border: `3px solid ${GOLD}`, background: 'linear-gradient(180deg, rgba(31,63,143,.55), rgba(10,18,45,.75))', boxShadow: `0 0 40px rgba(232,169,58,.45), inset 0 0 20px rgba(232,169,58,.25)`, transform: `scale(${pulse})` }}>
-            <Img src={a('gold_smartphone_receiver_icon')} style={{ width: 120, height: 120, ...iconMask }} />
+            <Img src={a('gold_smartphone_receiver_icon')} style={{ width: 120, height: 120, ...iconMask(40, 66) }} />
             <div dir="ltr" style={{ fontFamily: 'Montserrat', fontWeight: 500, fontSize: 72, letterSpacing: 3, ...goldText }}>0795 718 786</div>
           </div>
         ))}
         {item(1.65, (
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Img src={a('gold_location_pin_on_black')} style={{ width: 100, height: 100, ...iconMask }} />
+            <Img src={a('gold_location_pin_on_black')} style={{ width: 100, height: 100, ...iconMask(40, 66) }} />
             <div style={{ fontSize: 44, color: '#F4EEE2', fontWeight: 600 }}>الدرارية، الجزائر العاصمة</div>
           </div>
         ))}
@@ -314,43 +322,30 @@ const CTA = ({ seg }) => {
     </AbsoluteFill>
   );
 };
-const GoldLinesOverlay = () => (
-  <Img src={a('golden_lines_on_dark_background')} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', mixBlendMode: 'screen', opacity: 0.6 }} />
-);
 
-// ---------------- stage with transition zoom/blur ----------------
+// ---------------- stage: zoom + blur through each cut (part of the transition) ----------------
 const Stage = ({ children }) => {
   const t = useT();
   const k = transitionAmount(t);
   return <AbsoluteFill style={{ transform: `scale(${1 + k * 0.18})`, filter: k > 0.01 ? `blur(${k * 16}px) brightness(${1 + k * 0.5})` : undefined }}>{children}</AbsoluteFill>;
 };
 
-const Seg = ({ seg, overlayOnly }) => {
-  if (overlayOnly && seg.kind !== 'cta' && seg.kind !== 'card') return null;
-  switch (seg.kind) {
-    case 'intro': return <Speaker seg={seg} cutout />;
-    case 'speaker': return <Speaker seg={seg} />;
-    case 'card': return <Card seg={seg} />;
-    case 'video': return <VideoScene seg={seg} />;
-    case 'cta': return <CTA seg={seg} />;
-    default: return null;
-  }
-};
-
 export const Ad = ({ layers }) => {
   const overlayOnly = layers === 'overlay';
   const f = (s) => Math.round(s * FPS);
+  const total = f(DURATION);
   return (
     <AbsoluteFill style={{ background: overlayOnly ? 'transparent' : '#000' }}>
-      <Stage>
-        {SEGMENTS.map((seg, i) => (
-          <Sequence key={i} from={f(seg.from)} durationInFrames={f(seg.to) - f(seg.from)} layout="none">
-            <Seg seg={seg} overlayOnly={overlayOnly} />
-          </Sequence>
-        ))}
-      </Stage>
+      {!overlayOnly && (
+        <Stage>
+          <Sequence from={0} durationInFrames={f(9.93)} layout="none"><Intro /></Sequence>
+          <Sequence from={f(9.93)} durationInFrames={f(CTA_AT) - f(9.93)} layout="none"><Framed /></Sequence>
+          <Sequence from={f(CTA_AT)} durationInFrames={total - f(CTA_AT)} layout="none"><CTA /></Sequence>
+        </Stage>
+      )}
+      {overlayOnly && <Sequence from={f(CTA_AT)} layout="none"><CTA /></Sequence>}
       {POPS.map((p, i) => <Pop key={i} p={p} />)}
-      {!overlayOnly && <AbsoluteFill style={{ background: 'linear-gradient(180deg, transparent 55%, rgba(0,0,0,.55) 66%, rgba(0,0,0,.55) 80%, transparent 92%)', pointerEvents: 'none' }} />}
+      <GiftRow />
       {CAPS.map((c, i) => (
         <Sequence key={i} from={f(c.t[0])} durationInFrames={f(c.t[1]) - f(c.t[0]) + 1} layout="none">
           <Caption c={c} />
@@ -358,7 +353,7 @@ export const Ad = ({ layers }) => {
       ))}
       <Logo />
       <LogoTransition />
-      {!overlayOnly && <Audio src={staticFile('voice.mp3')} />}
+      {!overlayOnly && <Audio src={staticFile('raw.mp4')} />}
       {!overlayOnly && SFX.map((s, i) => (
         <Sequence key={`sfx${i}`} from={Math.max(0, f(s.t))} layout="none">
           <Audio src={staticFile(`sfx/${s.f}.wav`)} volume={s.v} />
