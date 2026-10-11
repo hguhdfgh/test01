@@ -60,10 +60,10 @@ const CAPS = [
 const BAND_Y = 205; // center of the top band
 const POPS = [
   // intro
-  { t: [2.7, 5.05], src: 'gold_calendar_icon_on_black', x: 830, y: 760, size: 400, label: '2026/2027' },
-  { t: [5.14, 6.7], src: 'gold_kaaba_on_pedestal', x: 830, y: 760, size: 400 },
-  { t: [7.2, 9.9], src: 'gold_crown_with_royal-blue_gems', x: 250, y: 760, size: 400, enter: 8.4, label: 'VIP' },
-  { t: [7.2, 9.9], src: 'gold_coins_with_checkmark', x: 830, y: 760, size: 400, enter: 9.02, label: 'اقتصادي' },
+  { t: [2.7, 5.05], src: 'gold_calendar_icon_on_black', x: 830, y: 520, size: 360, label: '2026/2027' },
+  { t: [5.14, 6.7], src: 'gold_kaaba_on_pedestal', x: 830, y: 520, size: 360 },
+  { t: [7.2, 9.9], src: 'gold_crown_with_royal-blue_gems', x: 250, y: 520, size: 360, enter: 8.4, label: 'VIP' },
+  { t: [7.2, 9.9], src: 'gold_coins_with_checkmark', x: 830, y: 520, size: 360, enter: 9.02, label: 'اقتصادي' },
   // framed part (top band, right side so the logo keeps the left)
   { t: [12.28, 14.34], src: 'gold_heart_with_inner_glow', x: 900, y: BAND_Y, size: 330, enter: 13.18 },
   { t: [14.42, 16.1], src: 'gold_airliner_banking_upward', x: 870, y: BAND_Y, size: 380 },
@@ -143,10 +143,10 @@ const Intro = () => {
     <AbsoluteFill>
       <GoldLinesBg />
       {/* gold halo behind the head */}
-      <div style={{ position: 'absolute', left: 140, top: 520, width: 800, height: 800, borderRadius: '50%', background: 'radial-gradient(circle, rgba(232,169,58,.28), transparent 65%)', filter: 'blur(20px)' }} />
+      <div style={{ position: 'absolute', left: 140, top: 380, width: 800, height: 800, borderRadius: '50%', background: 'radial-gradient(circle, rgba(232,169,58,.28), transparent 65%)', filter: 'blur(20px)' }} />
       <AbsoluteFill style={{ filter: 'drop-shadow(0 0 30px rgba(232,169,58,.35))' }}>
         <OffthreadVideo src={staticFile('intro_cut.webm')} transparent muted
-          style={{ position: 'absolute', left: -170, top: 560, width: 1420, height: 1420 * (1080 / 1076), transform: `scale(${z})`, transformOrigin: '50% 30%', filter: 'contrast(1.05) saturate(1.05)' }} />
+          style={{ position: 'absolute', left: -40, top: 470, width: 1160, height: 1160 * (1084 / 1080), transform: `scale(${z})`, transformOrigin: '50% 30%', filter: 'contrast(1.05) saturate(1.05)' }} />
       </AbsoluteFill>
       {/* fade body into the black at the bottom so captions sit cleanly */}
       <AbsoluteFill style={{ background: 'linear-gradient(180deg, transparent 62%, rgba(0,0,0,.85) 80%, #000 95%)' }} />
