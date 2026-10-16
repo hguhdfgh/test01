@@ -15,9 +15,17 @@
 <title>CERISNOW White Pro</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="CERISNOW White Pro, gel de blanchiment dentaire professionnel 35 % H2O2, fabriqué aux USA.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preload" href="fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/jost.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="images/hero_clinic_poster.webp" as="image" fetchpriority="high">
+<style>
+@font-face{font-family:"Cormorant Garamond";font-style:normal;font-weight:400 600;font-display:swap;src:url(fonts/cormorant.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Cormorant Garamond";font-style:italic;font-weight:400 500;font-display:swap;src:url(fonts/cormorant-italic.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Jost";font-style:normal;font-weight:300 600;font-display:swap;src:url(fonts/jost.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+</style>
+<!-- polices arabes : chargées sans bloquer l'affichage (téléchargées seulement quand le texte arabe s'affiche) -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap" media="print" onload="this.media='all'">
 
 <script>
 /* =====================================================================
@@ -30,19 +38,20 @@ window.CERISNOW_CONFIG = {
   whatsapp: "213559625620",          // numéro WhatsApp qui reçoit les demandes (format international, sans +)
   images: {
     heroVideo:  "images/hero_clinic.mp4",        // vidéo en fond du hero (seringue + lampe)
-    heroPoster: "images/hero_clinic_poster.jpg", // image affichée avant le chargement de la vidéo
-    smile:   "images/poster_smile_hat.jpg",      // la belle photo de sourire
-    product: "images/poster_syringe_marble.jpg", // photo produit (section sourire)
-    label:   "images/poster_syringe_clinic.jpg", // photo produit (section composition)
-    trial:   "images/poster_karakou.jpg"         // visuel à côté de l'essai gratuit
+    heroVideoMobile: "images/hero_clinic_m.mp4", // version légère de la même vidéo pour téléphone
+    heroPoster: "images/hero_clinic_poster.webp", // image affichée avant le chargement de la vidéo
+    smile:   "images/poster_smile_hat.webp",      // la belle photo de sourire
+    product: "images/poster_syringe_marble.webp", // photo produit (section sourire)
+    label:   "images/poster_syringe_clinic.webp", // photo produit (section composition)
+    trial:   "images/poster_karakou.webp"         // visuel à côté de l'essai gratuit
   },
   // Résultats : ajoute, retire ou change l'ordre. type = "video" ou "image".
   results: [
-    { type: "image", src: "images/result_mirror_before_after.jpg", fr: "Avant / après au fauteuil", ar: "قبل / بعد في العيادة", big: true },
-    { type: "video", src: "images/result_before_after.mp4", poster: "images/result_before_after_poster.jpg", fr: "Avant / après, une séance", ar: "قبل / بعد، جلسة واحدة" },
-    { type: "video", src: "images/result_smile.mp4", poster: "images/result_smile_poster.jpg", fr: "Juste après la séance", ar: "مباشرة بعد الجلسة" },
-    { type: "image", src: "images/result_1.jpg", fr: "Résultat cliente", ar: "نتيجة زبونة" },
-    { type: "image", src: "images/result_2.jpg", fr: "Un sourire naturel", ar: "ابتسامة طبيعية" }
+    { type: "image", src: "images/result_mirror_before_after.webp", fr: "Avant / après au fauteuil", ar: "قبل / بعد في العيادة", big: true },
+    { type: "video", src: "images/result_before_after.mp4", poster: "images/result_before_after_poster.webp", fr: "Avant / après, une séance", ar: "قبل / بعد، جلسة واحدة" },
+    { type: "video", src: "images/result_smile.mp4", poster: "images/result_smile_poster.webp", fr: "Juste après la séance", ar: "مباشرة بعد الجلسة" },
+    { type: "image", src: "images/result_1.webp", fr: "Résultat cliente", ar: "نتيجة زبونة" },
+    { type: "video", src: "images/result_feedback.mp4", poster: "images/result_feedback_poster.webp", fr: "Avis client en vidéo", ar: "رأي زبونة بالفيديو", sound: true }
   ]
 };
 </script>
@@ -120,9 +129,9 @@ html[dir="rtl"] .hero::before{background:linear-gradient(270deg,rgba(11,9,6,.94)
 
 .hero-img video{width:100%;height:100%;object-fit:cover;object-position:center 35%;filter:saturate(1.05) contrast(1.05)}
 #dust{position:absolute;inset:0;z-index:-1;pointer-events:none}
-.letterbox{position:absolute;left:0;right:0;height:0;background:#000;z-index:2;animation:lb 1.6s cubic-bezier(.7,0,.2,1) forwards}
-.letterbox.t{top:0}.letterbox.b{bottom:0}
-@keyframes lb{0%{height:50%}100%{height:0}}
+.letterbox{position:absolute;left:0;right:0;height:50%;background:#000;z-index:2;transform:scaleY(0);animation:lb 1.6s cubic-bezier(.7,0,.2,1) both;pointer-events:none}
+.letterbox.t{top:0;transform-origin:top}.letterbox.b{bottom:0;transform-origin:bottom}
+@keyframes lb{0%{transform:scaleY(1)}100%{transform:scaleY(0)}}
 .hero-in{position:relative;padding-block:140px 70px;width:100%;display:grid;gap:26px}
 .hero h1{font-size:clamp(2.9rem,7.6vw,6.4rem);font-weight:400;max-width:12ch;letter-spacing:-.01em}
 html[dir="rtl"] .hero h1{font-size:clamp(2.6rem,6.6vw,5.4rem);line-height:1.3;max-width:14ch}
@@ -299,8 +308,8 @@ html[dir="rtl"] .vs-table thead th{letter-spacing:0;font-size:.9rem}
 .field{display:grid;gap:7px}
 .field label{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:500}
 html[dir="rtl"] .field label{letter-spacing:0;font-size:.88rem}
-.field input,.field select{font:400 16px var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:15px 16px;width:100%;transition:border-color .3s,box-shadow .3s}
-.field input:focus,.field select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 18%,transparent)}
+.field input:not([type=range]),.field select{font:400 16px var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:15px 16px;width:100%;transition:border-color .3s,box-shadow .3s}
+.field input:not([type=range]):focus,.field select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 18%,transparent)}
 .field .err{font-size:.8rem;color:#B4472F;min-height:1em}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
@@ -311,6 +320,20 @@ html[dir="rtl"] .field label{letter-spacing:0;font-size:.88rem}
 .seg input:focus-visible+label{outline:2px solid var(--gold);outline-offset:-4px}
 .fine{font-size:.78rem;color:var(--muted)}
 .form .btn{justify-content:center;width:100%}
+.vol{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:16px 18px 12px;display:grid;gap:14px;transition:border-color .3s,box-shadow .3s}
+.vol.bad{border-color:#B4472F;box-shadow:0 0 0 4px rgba(180,71,47,.12)}
+.vol-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.vol-out{font-family:var(--display);font-size:2.4rem;line-height:1;color:var(--gold-deep,var(--gold));font-weight:500;min-width:3ch}
+.vol-out small{font-family:var(--body);font-size:.8rem;color:var(--muted);font-weight:400;margin-inline-start:6px}
+.vol.untouched .vol-out{color:var(--muted);font-size:1rem;font-family:var(--body);line-height:1.4}
+.vol-hint{font-size:.78rem;color:var(--muted)}
+.vol input[type=range]{height:6px;margin:6px 0}
+.vol.untouched input[type=range]::-webkit-slider-thumb{animation:nudge 1.8s ease-in-out infinite}
+@keyframes nudge{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--gold) 45%,transparent)}50%{box-shadow:0 0 0 10px transparent}}
+.vol-ticks{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted)}
+.vol-ticks button{all:unset;cursor:pointer;padding:6px 4px;border-radius:8px}
+.vol-ticks button:focus-visible{outline:2px solid var(--gold)}
+.lb video{max-width:100%;max-height:100%;border-radius:12px;background:#000}
 .field textarea{font:400 16px var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px;width:100%;resize:vertical;min-height:56px;transition:border-color .3s,box-shadow .3s}
 .field textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 18%,transparent)}
 .wa-preview{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:color-mix(in srgb,#25D366 6%,var(--bg))}
@@ -392,7 +415,7 @@ body{-webkit-tap-highlight-color:transparent;text-size-adjust:100%;-webkit-text-
 </div>
 
 <header class="hero" id="top">
-  <div class="hero-img" id="heroImg"><video id="heroVid" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video></div>
+  <div class="hero-img" id="heroImg"><video id="heroVid" muted loop playsinline preload="none" aria-hidden="true"></video></div>
   <canvas id="dust" aria-hidden="true"></canvas>
   <div class="letterbox t"></div><div class="letterbox b"></div>
   <div class="wrap hero-in">
@@ -423,7 +446,7 @@ body{-webkit-tap-highlight-color:transparent;text-size-adjust:100%;-webkit-text-
 <section id="sourire">
   <div class="wrap smile-grid">
     <div class="smile-photo rise">
-      <img id="smileImg" data-zoom alt="Sourire après blanchiment CERISNOW" data-i18n-alt="smile_alt">
+      <img id="smileImg" data-zoom loading="lazy" decoding="async" alt="Sourire après blanchiment CERISNOW" data-i18n-alt="smile_alt">
           </div>
     <div class="smile-copy rise">
       <p class="eyebrow" data-i18n="smile_eyebrow">Le sourire que vos patients viennent chercher</p>
@@ -546,7 +569,7 @@ body{-webkit-tap-highlight-color:transparent;text-size-adjust:100%;-webkit-text-
         <div class="step"><div><h3 data-i18n="st3h">Vous testez sur un patient</h3><p data-i18n="st3p">Jugez vous-même le résultat au fauteuil.</p></div></div>
         <div class="step"><div><h3 data-i18n="st4h">Vous gardez ou vous retournez</h3><p data-i18n="st4p">Convaincu, vous la gardez. Pas convaincu, vous la rendez.</p></div></div>
       </div>
-      <figure class="trial-visual" style="margin-inline:0"><img id="trialImg" alt="CERISNOW, un sourire plus blanc" data-zoom></figure>
+      <figure class="trial-visual" style="margin-inline:0"><img id="trialImg" alt="CERISNOW, un sourire plus blanc" data-zoom loading="lazy" decoding="async"></figure>
     </div>
 
     <form class="form rise" id="trialForm" novalidate>
@@ -581,8 +604,13 @@ body{-webkit-tap-highlight-color:transparent;text-size-adjust:100%;-webkit-text-
           <input id="fPlace" name="place" autocomplete="organization" data-i18n-ph="f_place_ph" placeholder="Cabinet dentaire Les Pins">
         </div>
         <div class="field">
-          <label for="fNote" data-i18n="f_note">Votre message (facultatif)</label>
-          <textarea id="fNote" name="note" rows="2" data-i18n-ph="f_note_ph" placeholder="Ex. : je fais 20 blanchiments par mois"></textarea>
+          <label for="fVol" id="lVol" data-i18n="f_vol">Combien de blanchiments faites-vous par mois ?</label>
+          <div class="vol untouched" id="volBox">
+            <div class="vol-top"><span class="vol-out" id="volOut" aria-hidden="true" data-i18n="f_vol_pick">Glissez pour indiquer</span><span class="vol-hint" data-i18n="f_vol_req">Obligatoire</span></div>
+            <input type="range" class="gold" id="fVol" name="volume" min="1" max="60" step="1" value="10" aria-labelledby="lVol" aria-required="true">
+            <div class="vol-ticks" aria-hidden="true"><button type="button" data-v="1">1</button><button type="button" data-v="15">15</button><button type="button" data-v="30">30</button><button type="button" data-v="45">45</button><button type="button" data-v="60"><span class="ltr">60+</span></button></div>
+          </div>
+          <span class="err" id="eVol"></span>
         </div>
         <div class="wa-preview" aria-live="polite">
           <div class="wa-head"><span class="wa-dot"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3C9 3 3.3 8.6 3.3 15.6c0 2.4.7 4.7 1.9 6.7L3 29l6.9-2.1c1.9 1 4 1.6 6.1 1.6 7 0 12.7-5.7 12.7-12.7S23 3 16 3zm0 23.2c-2 0-3.9-.6-5.6-1.6l-.4-.2-4.1 1.2 1.2-4-.3-.4c-1.1-1.7-1.7-3.7-1.7-5.7C5.1 9.8 10 5 16 5s10.9 4.9 10.9 10.6S22 26.2 16 26.2zm6-7.9c-.3-.2-1.9-1-2.2-1.1-.3-.1-.5-.2-.7.2-.2.3-.8 1.1-1 1.3-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.3 1.4 3.5c.2.2 2.4 3.6 5.8 5 .8.4 1.4.6 1.9.7.8.3 1.6.2 2.2.1.7-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg></span><b>CERISNOW</b><small data-i18n="wa_prev">Aperçu de votre message WhatsApp</small></div>
@@ -605,7 +633,7 @@ body{-webkit-tap-highlight-color:transparent;text-size-adjust:100%;-webkit-text-
 
 <a class="fab" id="fab" href="#" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16 3C9 3 3.3 8.6 3.3 15.6c0 2.4.7 4.7 1.9 6.7L3 29l6.9-2.1c1.9 1 4 1.6 6.1 1.6 7 0 12.7-5.7 12.7-12.7S23 3 16 3zm6 15.3c-.3-.2-1.9-1-2.2-1.1-.3-.1-.5-.2-.7.2-.2.3-.8 1.1-1 1.3-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6c.2-.2.2-.4.3-.6.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.3 1.4 3.5c.2.2 2.4 3.6 5.8 5 2.9 1.1 3.4.9 4.1.8.7-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z" fill-rule="evenodd"/></svg><span data-i18n="fab">Une question ? WhatsApp</span></a>
 <div class="mbar" id="mbar"><a class="btn" href="#essai"><span data-i18n="sticky">Essai gratuit</span><svg class="arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
-<div class="lb" id="lb" hidden role="dialog" aria-modal="true"><button class="lb-x" id="lbX" type="button" data-i18n-aria="close" aria-label="Fermer">×</button><img id="lbImg" alt=""></div>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true"><button class="lb-x" id="lbX" type="button" data-i18n-aria="close" aria-label="Fermer">×</button><img id="lbImg" alt=""><video id="lbVid" controls playsinline hidden></video></div>
 
 <footer>
   <div class="wrap">
@@ -653,7 +681,7 @@ fr:{
  st3h:"Vous testez sur un patient",st3p:"Jugez vous-même le résultat au fauteuil.",st4h:"Vous gardez ou vous retournez",st4p:"Convaincu, vous la gardez. Pas convaincu, vous la rendez.",
  f_title:"Ma seringue d'essai",f_type:"Vous êtes",f_cab:"Cabinet dentaire",f_sal:"Institut de beauté",f_name:"Nom complet",f_name_ph:"Dr Amina Benali",
  f_phone:"Téléphone",f_city:"Wilaya",f_city_ph:"Alger",f_place:"Nom du cabinet ou de l'institut",f_place_ph:"Cabinet dentaire Les Pins",
- f_submit:"Envoyer ma demande sur WhatsApp",f_fine:"Sans engagement. WhatsApp s'ouvre avec votre message prêt, il suffit d'appuyer sur Envoyer.",f_note:"Votre message (facultatif)",f_note_ph:"Ex. : je fais 20 blanchiments par mois",wa_prev:"Aperçu de votre message",edit:"Modifier ma demande",fab:"Une question ? WhatsApp",fab_msg:"Bonjour, j'ai une question sur CERISNOW White Pro.",sticky:"Essai gratuit",close:"Fermer",
+ f_submit:"Envoyer ma demande sur WhatsApp",f_fine:"Sans engagement. WhatsApp s'ouvre avec votre message prêt, il suffit d'appuyer sur Envoyer.",f_vol:"Combien de blanchiments faites-vous par mois ?",f_vol_pick:"Glissez pour indiquer",f_vol_req:"Obligatoire",f_vol_unit:"par mois",e_vol:"Faites glisser le curseur pour indiquer votre nombre de blanchiments par mois.",wa_vol:"Blanchiments par mois",wa_prev:"Aperçu de votre message",edit:"Modifier ma demande",fab:"Une question ? WhatsApp",fab_msg:"Bonjour, j'ai une question sur CERISNOW White Pro.",sticky:"Essai gratuit",video_sound:"Vidéo · son",close:"Fermer",
  e_name:"Indiquez votre nom.",e_phone:"Indiquez un numéro algérien valide, par exemple 05 55 12 34 56.",
  ok_title:"Votre message est prêt",ok_lede:"WhatsApp s'ouvre avec votre demande. Si rien ne s'ouvre, appuyez sur le bouton ci-dessous.",ok_btn:"Ouvrir WhatsApp",ok_or:"Ou appelez-nous :",copy:"Copier",copied:"Copié",
  wa_msg:"Bonjour, je souhaite recevoir une seringue d'essai gratuite CERISNOW White Pro.",wa_name:"Nom",wa_phone:"Téléphone",wa_city:"Wilaya",wa_place:"Établissement",wa_type:"Type",
@@ -690,7 +718,7 @@ ar:{
  st3h:"تجرّبها على مريض",st3p:"احكم بنفسك على النتيجة في العيادة.",st4h:"تحتفظ بها أو تعيدها",st4p:"إن اقتنعت احتفظت بها، وإن لم تقتنع أعدتها.",
  f_title:"حقنتي التجريبية",f_type:"أنت",f_cab:"عيادة أسنان",f_sal:"صالون تجميل",f_name:"الاسم الكامل",f_name_ph:"د. أمينة بن علي",
  f_phone:"الهاتف",f_city:"الولاية",f_city_ph:"الجزائر العاصمة",f_place:"اسم العيادة أو الصالون",f_place_ph:"عيادة الصنوبر لطب الأسنان",
- f_submit:"أرسل طلبي عبر واتساب",f_fine:"دون التزام. يُفتح واتساب ورسالتك جاهزة، ما عليك إلا الضغط على إرسال.",f_note:"رسالتك (اختياري)",f_note_ph:"مثال: أُجري 20 عملية تبييض شهريًا",wa_prev:"معاينة رسالتك",edit:"تعديل طلبي",fab:"سؤال؟ واتساب",fab_msg:"مرحبًا، لديّ سؤال حول CERISNOW White Pro.",sticky:"تجربة مجانية",close:"إغلاق",
+ f_submit:"أرسل طلبي عبر واتساب",f_fine:"دون التزام. يُفتح واتساب ورسالتك جاهزة، ما عليك إلا الضغط على إرسال.",f_vol:"كم عملية تبييض تُجرون شهريًا؟",f_vol_pick:"اسحب المؤشر للتحديد",f_vol_req:"إجباري",f_vol_unit:"شهريًا",e_vol:"اسحب المؤشر لتحديد عدد عمليات التبييض التي تُجرونها شهريًا.",wa_vol:"عدد عمليات التبييض شهريًا",wa_prev:"معاينة رسالتك",edit:"تعديل طلبي",fab:"سؤال؟ واتساب",fab_msg:"مرحبًا، لديّ سؤال حول CERISNOW White Pro.",sticky:"تجربة مجانية",video_sound:"فيديو · بالصوت",close:"إغلاق",
  e_name:"يرجى إدخال اسمك.",e_phone:"يرجى إدخال رقم جزائري صحيح، مثل 05 55 12 34 56.",
  ok_title:"رسالتك جاهزة",ok_lede:"يُفتح واتساب بطلبك. إن لم يُفتح، اضغط على الزر أدناه.",ok_btn:"فتح واتساب",ok_or:"أو اتصل بنا:",copy:"نسخ",copied:"تم النسخ",
  wa_msg:"مرحبًا، أرغب في الحصول على حقنة تجريبية مجانية من CERISNOW White Pro.",wa_name:"الاسم",wa_phone:"الهاتف",wa_city:"الولاية",wa_place:"المؤسسة",wa_type:"النوع",
@@ -708,7 +736,7 @@ function applyLang(l){
   document.querySelectorAll("[data-i18n-alt]").forEach(el=>{ const k=el.dataset.i18nAlt; if(d[k]!=null) el.alt=d[k]; });
   if(typeof syncFab==="function"&&typeof waNumber!=="undefined") syncFab();
   $("#langBtn").textContent = d.lang; $("#langBtn").setAttribute("aria-label", d.lang_label);
-  buildBA(); runSim(); if(typeof renderPreview==="function") renderPreview();
+  buildBA(); runSim(); if(typeof syncVol==="function") syncVol(); if(typeof renderPreview==="function") renderPreview();
   store.set("cerine-lang", l);
 }
 $("#langBtn").addEventListener("click",()=>applyLang(lang==="fr"?"ar":"fr"));
@@ -724,7 +752,15 @@ syncIcon();
 
 /* ---------- images ---------- */
 $("#heroImg").style.backgroundImage = `url("${C.images.heroPoster}")`;
-const hv=$("#heroVid"); hv.poster=C.images.heroPoster; hv.src=C.images.heroVideo; hv.play&&hv.play().catch(()=>{});
+const hv=$("#heroVid"); hv.poster=C.images.heroPoster;
+/* la vidéo du hero se charge après la page (l'image s'affiche d'abord), version légère sur téléphone, rien si "économie de données" */
+(function(){
+  const cn=navigator.connection||{}; if(cn.saveData || /(^|-)2g$/.test(cn.effectiveType||"")) return;
+  const go=()=>{ hv.src = (innerWidth<700 && C.images.heroVideoMobile) ? C.images.heroVideoMobile : C.images.heroVideo;
+    hv.addEventListener("playing",()=>hv.classList.add("on"),{once:true}); hv.play&&hv.play().catch(()=>{}); };
+  const later=()=> ("requestIdleCallback" in window) ? requestIdleCallback(go,{timeout:1500}) : setTimeout(go,300);
+  document.readyState==="complete" ? later() : addEventListener("load",later,{once:true});
+})();
 $("#smileImg").src = C.images.smile;
 $("#productImg").src = C.images.product;
 $("#labelImg").src = C.images.label;
@@ -736,11 +772,10 @@ function buildBA(){
   g.innerHTML = C.results.map(r=>{
     const cap = lang==="ar"? r.ar : r.fr;
     const media = r.type==="video"
-      ? `<video src="${r.src}" poster="${r.poster||""}" autoplay muted loop playsinline preload="metadata" aria-label="${cap}"></video><span class="play">${d.video}</span>`
-      : `<img src="${r.src}" alt="${cap}" loading="lazy" data-zoom>`;
+      ? `<video data-src="${r.src}" poster="${r.poster||""}" muted loop playsinline preload="none" aria-label="${cap}"${r.sound?' data-sound':''}></video><span class="play">${r.sound? d.video_sound : d.video}</span>`
+      : `<img src="${r.src}" alt="${cap}" loading="lazy" decoding="async" data-zoom>`;
     return `<figure class="res${r.big?" big":""}"><div class="media">${media}</div><figcaption>${cap}</figcaption></figure>`;
   }).join("");
-  g.querySelectorAll("video").forEach(v=>v.play&&v.play().catch(()=>{}));
 }
 /* ---------- simulateur ---------- */
 function runSim(){
@@ -763,6 +798,21 @@ $("#copyBtn").addEventListener("click",e=>{
   const done=()=>{e.target.textContent=T[lang].copied; setTimeout(()=>e.target.textContent=T[lang].copy,1600)};
   if(navigator.clipboard) navigator.clipboard.writeText("+"+waNumber).then(done).catch(()=>{const s=getSelection(),r=document.createRange();r.selectNodeContents($("#waNum"));s.removeAllRanges();s.addRange(r);});
 });
+/* curseur : nombre de blanchiments par mois (obligatoire) */
+let volTouched=false;
+const vol=$("#fVol"), volBox=$("#volBox");
+function volText(){ return +vol.value>=60? "60+" : vol.value; }
+function syncVol(){
+  const d=T[lang]; const pct=(vol.value-vol.min)/(vol.max-vol.min)*100;
+  vol.style.setProperty("--fill", volTouched? pct+"%" : "0%");
+  volBox.classList.toggle("untouched",!volTouched);
+  $("#volOut").innerHTML = volTouched? `<span class="ltr">${volText()}</span><small>${d.f_vol_unit}</small>` : d.f_vol_pick;
+  vol.setAttribute("aria-valuetext", volTouched? `${volText()} ${d.f_vol_unit}` : d.f_vol_pick);
+}
+function setVol(){ volTouched=true; volBox.classList.remove("bad"); $("#eVol").textContent=""; syncVol(); renderPreview(); }
+vol.addEventListener("input",setVol);
+vol.addEventListener("pointerdown",()=>{ if(!volTouched) requestAnimationFrame(setVol); });
+document.querySelectorAll(".vol-ticks button").forEach(b=>b.addEventListener("click",()=>{ vol.value=b.dataset.v; setVol(); }));
 function buildMsg(){
   const d=T[lang]; const v=id=>$(id).value.trim();
   const type=document.querySelector('input[name="type"]:checked');
@@ -770,7 +820,7 @@ function buildMsg(){
   const lines=[d.wa_msg,"",`${d.wa_type} : ${typeLabel}`,`${d.wa_name} : ${v("#fName")||"…"}`,`${d.wa_phone} : ${v("#fPhone")||"…"}`];
   if(v("#fCity")) lines.push(`${d.wa_city} : ${v("#fCity")}`);
   if(v("#fPlace")) lines.push(`${d.wa_place} : ${v("#fPlace")}`);
-  if(v("#fNote")) lines.push("", v("#fNote"));
+  lines.push(`${d.wa_vol} : ${volTouched? volText() : "…"}`);
   return lines.join("\n");
 }
 function waUrl(text){ return `https://wa.me/${waNumber}?text=${encodeURIComponent(text)}`; }
@@ -779,7 +829,7 @@ function renderPreview(){
   $("#waPreview").innerHTML = esc(buildMsg()).replace(/^([^:\n]+ :)/gm,"<b>$1</b>");
   $("#waLink").href = waUrl(buildMsg());
 }
-["#fName","#fPhone","#fCity","#fPlace","#fNote"].forEach(id=>$(id).addEventListener("input",renderPreview));
+["#fName","#fPhone","#fCity","#fPlace"].forEach(id=>$(id).addEventListener("input",renderPreview));
 document.querySelectorAll('input[name="type"]').forEach(r=>r.addEventListener("change",renderPreview));
 $("#trialForm").addEventListener("submit",e=>{
   e.preventDefault(); const d=T[lang];
@@ -787,7 +837,8 @@ $("#trialForm").addEventListener("submit",e=>{
   let ok=true;
   $("#eName").textContent = name? "" : (ok=false, d.e_name);
   $("#ePhone").textContent = /^(\+213|00213|0)?[5-7]\d{8}$|^(\+213|0)?[2-4]\d{7,8}$/.test(phone) ? "" : (ok=false, d.e_phone);
-  if(!ok){ (name? $("#fPhone"):$("#fName")).focus(); return; }
+  if(!volTouched){ ok=false; $("#eVol").textContent=d.e_vol; volBox.classList.add("bad"); }
+  if(!ok){ const first = !name? $("#fName") : $("#ePhone").textContent? $("#fPhone") : vol; first.focus({preventScroll:true}); first.scrollIntoView({behavior: reduce? "auto":"smooth", block:"center"}); return; }
   renderPreview();
   $("#formBody").hidden = true; $("#formDone").hidden = false;
   try{ $("#waLink").click(); }catch(err){}
@@ -806,17 +857,22 @@ if("IntersectionObserver" in window){
 const lb=$("#lb"), lbImg=$("#lbImg");
 document.addEventListener("click",e=>{
   const t=e.target.closest("[data-zoom], .res .media"); if(!t) return;
+  const vid = t.querySelector && t.querySelector("video[data-sound]");
+  if(vid){ const lv=$("#lbVid"); lbImg.hidden=true; lv.hidden=false; lv.poster=vid.poster; lv.src=vid.dataset.src; lv.muted=false; lv.play&&lv.play().catch(()=>{}); lb.hidden=false; document.body.style.overflow="hidden"; return; }
   const img = t.tagName==="IMG"? t : t.querySelector("img"); if(!img) return;
-  lbImg.src=img.currentSrc||img.src; lbImg.alt=img.alt; lb.hidden=false; document.body.style.overflow="hidden";
+  lbImg.hidden=false; lbImg.src=img.currentSrc||img.src; lbImg.alt=img.alt; lb.hidden=false; document.body.style.overflow="hidden";
 });
-function closeLb(){ lb.hidden=true; lbImg.src=""; document.body.style.overflow=""; }
-lb.addEventListener("click",e=>{ if(e.target!==lbImg) closeLb(); });
+function closeLb(){ lb.hidden=true; lbImg.src=""; const lv=$("#lbVid"); lv.pause(); lv.removeAttribute("src"); lv.load(); lv.hidden=true; document.body.style.overflow=""; }
+lb.addEventListener("click",e=>{ if(e.target!==lbImg && e.target.id!=="lbVid") closeLb(); });
 addEventListener("keydown",e=>{ if(e.key==="Escape"&&!lb.hidden) closeLb(); });
 /* ---------- vidéos : pause hors écran ---------- */
 if("IntersectionObserver" in window){
-  const vio=new IntersectionObserver(es=>es.forEach(en=>{ const v=en.target; if(en.isIntersecting){ v.play&&v.play().catch(()=>{}); } else { v.pause&&v.pause(); } }),{threshold:.1});
-  const watchVids=()=>document.querySelectorAll("video").forEach(v=>vio.observe(v));
+  /* vidéos des résultats : téléchargées seulement quand on approche, en pause hors écran */
+  const vio=new IntersectionObserver(es=>es.forEach(en=>{ const v=en.target;
+    if(en.isIntersecting){ if(v.dataset.src&&!v.src){ v.src=v.dataset.src; } v.play&&v.play().catch(()=>{}); } else { v.pause&&v.pause(); } }),{threshold:.01,rootMargin:"250px 0px"});
+  const watchVids=()=>document.querySelectorAll("#resGrid video").forEach(v=>vio.observe(v));
   watchVids(); new MutationObserver(watchVids).observe($("#resGrid"),{childList:true});
+} else { document.querySelectorAll("#resGrid video").forEach(v=>{ v.src=v.dataset.src; v.play&&v.play().catch(()=>{}); });
 }
 
 /* ---------- barre qui devient opaque ---------- */
